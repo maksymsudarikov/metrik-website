@@ -1245,6 +1245,13 @@
 
       .hero {
         padding: 100px 20px 40px;
+        min-height: unset;
+      }
+
+      .agent-widget {
+        height: 380px;
+        max-height: 380px;
+        flex-shrink: 0;
       }
 
       .hero-cta-row {
@@ -1709,6 +1716,15 @@
         removeTypingIndicator();
         conversationHistory.push({ role: 'assistant', content: reply });
         addMessage(reply);
+
+        // If agent suggests booking, show a booking button in the chat
+        const bookingKeywords = ['audit', 'book', 'schedule', 'call', 'chat'];
+        const replyLower = reply.toLowerCase();
+        if (bookingKeywords.some(kw => replyLower.includes(kw))) {
+          setTimeout(() => {
+            addMessage('<a href="https://cal.com/usemetrik/audit" target="_blank" class="book-call-btn">Book Free Audit →</a>', false, true);
+          }, 400);
+        }
       } catch {
         removeTypingIndicator();
         addMessage('Something went wrong. Please try again in a moment.');
@@ -1739,6 +1755,16 @@
     agentSend.addEventListener('click', handleUserInput);
     agentInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') handleUserInput();
+    });
+
+    // Fix mobile keyboard jump — scroll widget into view instead of letting
+    // the browser scroll the whole page when the input is focused
+    agentInput.addEventListener('focus', () => {
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          agentInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+      }
     });
 
     // Form submission — posts to Netlify Forms via fetch
