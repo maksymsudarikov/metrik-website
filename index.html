@@ -1615,14 +1615,41 @@
     const agentInput = document.getElementById('agentInput');
     const agentSend = document.getElementById('agentSend');
 
-    const responses = {
-      'law firm': "Law firms typically save 12–18 hrs/week on intake, document review, and client follow-up. Want me to outline which workflows we'd target first?",
-      'medical clinic': "Clinics usually recover the most time on appointment reminders, patient intake forms, and billing follow-up. Want to see what that looks like for your practice?",
-      'accounting': "Accounting practices often see the fastest ROI on document processing and client onboarding. Want to see what that looks like?",
-      'other': "Every business has repetitive work AI can handle. Tell me what your team spends the most time on manually — scheduling, paperwork, follow-ups, data entry — and I'll show you where we'd start."
-    };
+    // Conversation history for Haiku — full message array sent on every request
+    let conversationHistory = [];
 
-    const followUpMessage = "Got it. The best way to evaluate exactly how we can help is to jump on a quick process mapping call. It's free and zero pressure.";
+    // Typing indicator element reference
+    let typingIndicator = null;
+
+    function showTypingIndicator() {
+      typingIndicator = document.createElement('div');
+      typingIndicator.className = 'message message-agent';
+      typingIndicator.textContent = '...';
+      agentMessages.appendChild(typingIndicator);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      if (typingIndicator) {
+        typingIndicator.remove();
+        typingIndicator = null;
+      }
+    }
+
+    async function callHaiku(messages) {
+      const response = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+
+      if (!response.ok) {
+        throw new Error('Function returned ' + response.status);
+      }
+
+      const data = await response.json();
+      return data.reply;
+    }
 
     function addMessage(text, isUser = false, isHTML = false) {
       const message = document.createElement('div');
@@ -1652,77 +1679,52 @@
       agentMessages.scrollTop = agentMessages.scrollHeight;
     }
 
-    function handleQuickReply(option) {
-      // Remove quick replies
-      const replies = agentMessages.querySelectorAll('.quick-replies');
-      replies.forEach(r => r.remove());
-
-      // Add user message
-      addMessage(option, true);
-
-      // Check for affirmative responses first
-      const lowerOption = option.toLowerCase();
-      if (lowerOption === 'yes' || lowerOption === 'tell me more') {
-        setTimeout(() => {
-          addMessage(followUpMessage);
-
-          // Add book call button
-          setTimeout(() => {
-            const btnHTML = '<a href="#cta-section" class="book-call-btn">Book a Call →</a>';
-            addMessage(btnHTML, false, true);
-          }, 500);
-        }, 600);
-        return;
-      }
-
-      // Get response for industry options
-      const key = lowerOption;
-      const response = responses[key] || responses['other'];
-
-      // Add agent response after delay
-      setTimeout(() => {
-        addMessage(response);
-
-        // Add follow-up question
-        setTimeout(() => {
-          addMessage("Want me to outline which workflows we'd target first?");
-          addQuickReplies(['Yes', 'Tell me more']);
-        }, 800);
-      }, 600);
-    }
-
-    function handleUserInput() {
+    async function handleUserInput() {
       const text = agentInput.value.trim();
       if (!text) return;
 
       agentInput.value = '';
+      agentInput.disabled = true;
+      agentSend.disabled = true;
+
+      // Remove any existing quick replies
+      agentMessages.querySelectorAll('.quick-replies').forEach(r => r.remove());
+
       addMessage(text, true);
+      conversationHistory.push({ role: 'user', content: text });
 
-      // Check for yes/positive responses after follow-up
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes('yes') || lowerText.includes('sure') || lowerText.includes('tell me')) {
-        setTimeout(() => {
-          addMessage(followUpMessage);
+      showTypingIndicator();
 
-          // Add book call button
-          setTimeout(() => {
-            const btnHTML = '<a href="#cta-section" class="book-call-btn">Book a Call</a>';
-            addMessage(btnHTML, false, true);
-          }, 500);
-        }, 600);
-      } else {
-        // Default fallback
-        setTimeout(() => {
-          addMessage("Got it. The best way to evaluate is a quick process mapping call — free and zero pressure. Want to book one?");
-          addQuickReplies(['Book a Call', 'Maybe later']);
-        }, 600);
+      try {
+        const reply = await callHaiku(conversationHistory);
+        removeTypingIndicator();
+        conversationHistory.push({ role: 'assistant', content: reply });
+        addMessage(reply);
+      } catch {
+        removeTypingIndicator();
+        addMessage('Something went wrong. Please try again in a moment.');
+      } finally {
+        agentInput.disabled = false;
+        agentSend.disabled = false;
+        agentInput.focus();
       }
+    }
+
+    function handleQuickReply(option) {
+      agentMessages.querySelectorAll('.quick-replies').forEach(r => r.remove());
+      agentInput.value = option;
+      handleUserInput();
     }
 
     // Initialize agent
     setTimeout(() => {
       addMessage("Hi 👋 I'm Metrik's intake agent. What kind of business are you running?");
-      addQuickReplies(['Law firm', 'Medical clinic', 'Accounting', 'Other']);
+      addQuickReplies([
+        "We're drowning in admin",
+        "Follow-ups fall through the cracks",
+        "Our intake process is a mess",
+        "Just exploring AI"
+      ]);
     }, 800);
 
     agentSend.addEventListener('click', handleUserInput);
