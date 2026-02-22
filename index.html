@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrik — AI Implementation for SMBs</title>
+  <meta name="description"
+    content="AI implementation for businesses that want results, not reports. Working automations from week one.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* CSS Custom Properties */
+    :root {
+      --bg: #F8F7F4;
+      --ink: #0D0D0B;
+      --ink-mid: #4A4A44;
+      --ink-soft: #9A9A94;
+      --accent: #1B2A4A;
+      --border: #E0DDD7;
+      --white: #FFFFFF;
+      --black: #0D0D0B;
+      --light-blue: #6B9FD4;
+      --green: #22C55E;
+    }
+
+    /* Reset & Base */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Typography */
+    .font-barlow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+    }
+
+    .font-mono {
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .font-serif {
+      font-family: 'Instrument Serif', serif;
+    }
+
+    /* Utility Classes */
+    .eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-soft);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Navigation */
+    .nav-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: 100%;
+      max-width: 900px;
+      padding: 0 16px;
+    }
+
+    .nav-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(248, 247, 244, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 12px 24px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .nav-pill.scrolled {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--ink);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background: #24355a;
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 48px;
+      padding: 140px 64px 80px;
+      background: var(--bg);
+    }
+
+    .hero-content {
+      max-width: 600px;
+    }
+
+    .hero-eyebrow {
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: clamp(48px, 6vw, 72px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    .hero-title-italic {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-subline {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--ink-mid);
+      margin-top: 24px;
+      max-width: 480px;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 28px;
+      border-radius: 100px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: #24355a;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--ink-mid);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 24px;
+      border-radius: 100px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .btn-ghost:hover {
+      color: var(--ink);
+    }
+
+    .hero-trust {
+      margin-top: 20px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-soft);
+      letter-spacing: 0.08em;
+    }
+
+    /* AI Agent Widget */
+    .agent-widget {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.06);
+      height: 480px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F5F2EC;
+      padding: 16px 20px;
+    }
+
+    .agent-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .agent-name {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .agent-live {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .agent-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .agent-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .agent-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .agent-messages::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: messageIn 0.3s ease;
+    }
+
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-agent {
+      align-self: flex-start;
+      background: #EFEDE8;
+      color: var(--ink);
+    }
+
+    .message-user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-reply {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-reply:hover {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+    }
+
+    .book-call-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .book-call-btn:hover {
+      background: #24355a;
+    }
+
+    .agent-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .agent-input input {
+      flex-grow: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .agent-input input::placeholder {
+      color: var(--ink-soft);
+    }
+
+    .agent-send {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .agent-send:hover {
+      background: #24355a;
+    }
+
+    .agent-send svg {
+      width: 16px;
+      height: 16px;
+      color: var(--white);
+    }
+
+    /* Positioning Quote Section */
+    .positioning-quote {
+      background: var(--bg);
+      padding: 60px 64px;
+    }
+
+    .positioning-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .positioning-quote p {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: clamp(20px, 2.5vw, 28px);
+      color: #4A4A44;
+      max-width: 680px;
+      line-height: 1.6;
+      border-left: 2px solid #1B2A4A;
+      padding-left: 24px;
+      margin: 0;
+    }
+
+    /* Why Metrik Section */
+    .why-section {
+      background: var(--white);
+      padding: 80px 64px;
+    }
+
+    .why-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .why-eyebrow {
+      margin-bottom: 48px;
+    }
+
+    .why-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .why-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .why-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .why-card-body {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .why-card-visual {
+      margin-top: auto;
+    }
+
+    /* Pipeline Widget */
+    .pipeline-widget {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+    }
+
+    .pipeline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .pipeline-row.active {
+      background: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    .pipeline-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-done {
+      color: var(--green);
+    }
+
+    .status-running {
+      color: var(--accent);
+    }
+
+    .status-queued {
+      color: var(--ink-soft);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* Terminal Block */
+    .terminal-block {
+      background: var(--black);
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: #4ADE80;
+      line-height: 1.8;
+    }
+
+    .terminal-line {
+      display: block;
+    }
+
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: #4ADE80;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Calendar Widget */
+    .calendar-widget {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .calendar-day-label {
+      text-align: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--ink-mid);
+      border-radius: 6px;
+    }
+
+    .calendar-day.highlighted {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .deploy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--ink);
+      margin-top: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .deploy-btn:hover {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+    }
+
+    /* Ticker Strip */
+    .ticker-strip {
+      background: var(--black);
+      height: 48px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-content {
+      display: flex;
+      animation: marquee 35s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-item {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: rgba(248, 247, 244, 0.45);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 24px;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Contrast Section */
+    .contrast-section {
+      background: var(--black);
+      padding: 120px 64px;
+    }
+
+    .contrast-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .contrast-ghost {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: rgba(248, 247, 244, 0.25);
+      line-height: 1.6;
+    }
+
+    .contrast-statement {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: clamp(36px, 4vw, 52px);
+      color: var(--bg);
+      line-height: 1.3;
+    }
+
+    .contrast-highlight {
+      color: var(--light-blue);
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    /* Stat Moment Section */
+    .stat-section {
+      background: var(--bg);
+      padding: 80px 64px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .stat-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .stat-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9A9A94;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .stat-headline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: clamp(44px, 6vw, 96px);
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      line-height: 1.05;
+      white-space: normal;
+    }
+
+    /* Approach Section */
+    .approach-section {
+      background: var(--bg);
+      padding: 0 64px;
+    }
+
+    .approach-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .approach-eyebrow {
+      padding: 48px 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .approach-step {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .approach-step:first-of-type {
+      border-top: none;
+    }
+
+    .step-number {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin-bottom: 16px;
+    }
+
+    .step-number::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .step-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: clamp(48px, 5vw, 64px);
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .step-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    .step-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Flow Diagram */
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      width: 280px;
+    }
+
+    .flow-box {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      text-align: center;
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--ink-mid);
+    }
+
+    .flow-box.highlighted {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .flow-box.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--white);
+    }
+
+    .flow-connector {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+    }
+
+    .flow-connector.accent {
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    /* Hub Diagram */
+    .hub-diagram {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hub-dashed-circle {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border: 1px dashed var(--border);
+      border-radius: 50%;
+    }
+
+    .hub-center {
+      width: 48px;
+      height: 48px;
+      background: var(--white);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hub-center-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .hub-node {
+      position: absolute;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-mid);
+      z-index: 2;
+    }
+
+    .hub-node.top {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hub-node.bottom {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hub-node.left {
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .hub-node.right {
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .hub-line {
+      position: absolute;
+      background: var(--border);
+      z-index: 1;
+    }
+
+    .hub-line.vertical {
+      width: 1px;
+      height: 70px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hub-line.horizontal {
+      width: 70px;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Counter Visual */
+    .counter-visual {
+      text-align: center;
+    }
+
+    .counter-number {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 100px;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .counter-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-soft);
+      letter-spacing: 0.14em;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      width: 280px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 24px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.2s ease;
+    }
+
+    .progress-fill.animate {
+      width: 78%;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: var(--accent);
+      padding: 0;
+    }
+
+    .cta-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .cta-heading {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: clamp(36px, 4vw, 52px);
+      color: #F5F2EC;
+      line-height: 1.3;
+    }
+
+    .cta-heading-bold {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .cta-form {
+      max-width: 400px;
+    }
+
+    .cta-form-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: rgba(248, 247, 244, 0.5);
+      letter-spacing: 0.12em;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .cta-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(248, 247, 244, 0.2);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: var(--bg);
+      font-size: 15px;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .cta-input::placeholder {
+      color: rgba(248, 247, 244, 0.4);
+    }
+
+    .cta-input:focus {
+      border-color: rgba(248, 247, 244, 0.4);
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      background: var(--white);
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 32px 64px;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .footer-copy {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    /* Scroll Reveal Animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-stagger>* {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal-stagger.visible>*:nth-child(1) {
+      transition-delay: 0s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-stagger.visible>*:nth-child(2) {
+      transition-delay: 0.1s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-stagger.visible>*:nth-child(3) {
+      transition-delay: 0.2s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .ticker-content {
+        animation: none;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 120px 32px 60px;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .agent-widget {
+        height: 400px;
+      }
+
+      .why-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .contrast-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .approach-step {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .cta-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 100px 20px 40px;
+      }
+
+      .hero-cta-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .quote-section,
+      .why-section,
+      .contrast-section,
+      .stat-section,
+      .approach-section,
+      .cta-section .cta-inner,
+      .footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .stat-headline {
+        font-size: clamp(48px, 12vw, 72px);
+      }
+
+      .counter-number {
+        font-size: 64px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating Navigation -->
+  <nav class="nav-container">
+    <div class="nav-pill" id="navPill">
+      <a href="#" class="nav-logo">METRIK</a>
+      <div class="nav-links">
+        <a href="#approach" class="nav-link">Approach</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#outcomes" class="nav-link">Outcomes</a>
+      </div>
+      <a href="#cta-section" class="nav-cta">Book Free Audit <span>→</span></a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero-content reveal">
+        <div class="eyebrow hero-eyebrow">AI ADOPTION FOR SMALL & MEDIUM BUSINESSES</div>
+        <h1 class="hero-title">
+          Ambition meets<br>
+          <span class="hero-title-italic">Execution.</span>
+        </h1>
+        <p class="hero-subline">AI implementation for businesses that want results, not reports.</p>
+        <div class="hero-cta-row">
+          <a href="#cta-section" class="btn-primary">Book Free Audit <span>→</span></a>
+          <a href="#approach" class="btn-ghost">See how it works <span>→</span></a>
+        </div>
+        <p class="hero-trust">Trusted by law firms, clinics & service businesses</p>
+      </div>
+
+      <!-- AI Agent Widget -->
+      <div class="agent-widget reveal">
+        <div class="agent-header">
+          <div class="agent-status">
+            <div class="agent-dot"></div>
+            <span class="agent-name">Metrik Agent</span>
+          </div>
+          <span class="agent-live">LIVE</span>
+        </div>
+        <div class="agent-messages" id="agentMessages">
+          <!-- Messages will be added by JavaScript -->
+        </div>
+        <div class="agent-input">
+          <input type="text" id="agentInput" placeholder="Type a message..." autocomplete="off">
+          <button class="agent-send" id="agentSend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Positioning Quote Section -->
+    <section class="positioning-quote">
+      <div class="positioning-inner">
+        <p>Most businesses don't need more AI tools. They need someone to set them up and make them work.</p>
+      </div>
+    </section>
+
+    <!-- Why Metrik Section -->
+    <section class="why-section" id="why">
+      <div class="why-inner">
+        <div class="eyebrow why-eyebrow reveal">WHY METRIK</div>
+        <div class="why-cards reveal-stagger">
+          <!-- Card 1: Implementation Over Advice -->
+          <div class="why-card">
+            <h3 class="why-card-title">Implementation Over Advice</h3>
+            <p class="why-card-body">You get working automations, not a 40-page report. Real systems integrated into
+              your business.</p>
+            <div class="why-card-visual">
+              <div class="pipeline-widget">
+                <div class="pipeline-row">
+                  <span>Document intake</span>
+                  <span class="pipeline-status status-done">✓ Done</span>
+                </div>
+                <div class="pipeline-row">
+                  <span>Client follow-up</span>
+                  <span class="pipeline-status status-done">✓ Done</span>
+                </div>
+                <div class="pipeline-row active">
+                  <span>Contract review</span>
+                  <span class="pipeline-status status-running"><span class="pulse-dot"></span> Running</span>
+                </div>
+                <div class="pipeline-row">
+                  <span>Invoice generation</span>
+                  <span class="pipeline-status status-queued">Queued</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Built for Your Industry -->
+          <div class="why-card">
+            <h3 class="why-card-title">Built for Your Industry</h3>
+            <p class="why-card-body">Solutions designed around how law firms, clinics, and service businesses actually
+              operate.</p>
+            <div class="why-card-visual">
+              <div class="terminal-block">
+                <span class="terminal-line">> Initializing audit sequence...</span>
+                <span class="terminal-line">> Analyzing workflows.</span>
+                <span class="terminal-line">> Mapping custom architecture.</span>
+                <span class="terminal-line">> Ready for deployment.<span class="terminal-cursor"></span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Measurable Outcomes -->
+          <div class="why-card">
+            <h3 class="why-card-title">Measurable Outcomes</h3>
+            <p class="why-card-body">Every engagement ties to a real metric: time saved, errors reduced, revenue
+              recovered.</p>
+            <div class="why-card-visual">
+              <div class="calendar-widget">
+                <div class="calendar-header">
+                  <div class="calendar-day-label">S</div>
+                  <div class="calendar-day-label">M</div>
+                  <div class="calendar-day-label">T</div>
+                  <div class="calendar-day-label">W</div>
+                  <div class="calendar-day-label">T</div>
+                  <div class="calendar-day-label">F</div>
+                  <div class="calendar-day-label">S</div>
+                </div>
+                <div class="calendar-days">
+                  <div class="calendar-day">18</div>
+                  <div class="calendar-day">19</div>
+                  <div class="calendar-day">20</div>
+                  <div class="calendar-day">21</div>
+                  <div class="calendar-day highlighted">22</div>
+                  <div class="calendar-day">23</div>
+                  <div class="calendar-day">24</div>
+                </div>
+                <button class="deploy-btn">Deploy Automation <span>→</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticker Strip -->
+    <div class="ticker-strip">
+      <div class="ticker-content">
+        <span class="ticker-item">AI Adoption →</span>
+        <span class="ticker-item">Process Audit →</span>
+        <span class="ticker-item">Custom Automation →</span>
+        <span class="ticker-item">Deployment →</span>
+        <span class="ticker-item">Real Outcomes →</span>
+        <span class="ticker-item">No Reports →</span>
+        <span class="ticker-item">Week One Results →</span>
+        <span class="ticker-item">AI Adoption →</span>
+        <span class="ticker-item">Process Audit →</span>
+        <span class="ticker-item">Custom Automation →</span>
+        <span class="ticker-item">Deployment →</span>
+        <span class="ticker-item">Real Outcomes →</span>
+        <span class="ticker-item">No Reports →</span>
+        <span class="ticker-item">Week One Results →</span>
+      </div>
+    </div>
+
+    <!-- Contrast Section -->
+    <section class="contrast-section" id="contrast">
+      <div class="contrast-inner">
+        <div class="contrast-ghost reveal">
+          Most agencies focus on: writing 40-page theoretical reports, promising future capability, and charging for
+          strategy decks nobody uses.
+        </div>
+        <div class="contrast-statement reveal">
+          We focus on: deploying <span class="contrast-highlight">working automations</span> that drive measurable
+          outcomes from day one.
+        </div>
+      </div>
+    </section>
+
+    <!-- Stat Moment Section -->
+    <section class="stat-section" id="stat-moment">
+      <div class="stat-inner reveal">
+        <div class="stat-label">AVG. ACROSS ENGAGEMENTS</div>
+        <h2 class="stat-headline">14 hrs saved. Week one.</h2>
+      </div>
+    </section>
+
+    <!-- Approach Section -->
+    <section class="approach-section" id="approach">
+      <div class="approach-inner">
+        <div class="eyebrow approach-eyebrow reveal">OUR APPROACH</div>
+
+        <!-- Step 01: Process Audit -->
+        <div class="approach-step" id="services">
+          <div class="step-content reveal">
+            <div class="step-number">01</div>
+            <h3 class="step-title">Process Audit</h3>
+            <p class="step-body">We spend time with your team mapping exactly where manual work is costing you hours.
+              You walk away with a prioritized list of automation opportunities — even if you don't hire us.</p>
+          </div>
+          <div class="step-visual reveal">
+            <div class="flow-diagram">
+              <div class="flow-box">Current workflow mapped</div>
+              <div class="flow-connector"></div>
+              <div class="flow-box highlighted">Bottlenecks identified</div>
+              <div class="flow-connector accent"></div>
+              <div class="flow-box filled">Automation roadmap ready</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 02: Custom Automation -->
+        <div class="approach-step">
+          <div class="step-content reveal">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Custom Automation</h3>
+            <p class="step-body">We design and connect your automation system from scratch — no generic tools, no IT
+              team required. Built around how your business actually runs.</p>
+          </div>
+          <div class="step-visual reveal">
+            <div class="hub-diagram">
+              <div class="hub-dashed-circle"></div>
+              <div class="hub-line vertical"></div>
+              <div class="hub-line horizontal"></div>
+              <div class="hub-center">
+                <div class="hub-center-dot"></div>
+              </div>
+              <div class="hub-node top">CRM</div>
+              <div class="hub-node bottom">Email</div>
+              <div class="hub-node left">Docs</div>
+              <div class="hub-node right">Calendar</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 03: Deployment & Impact -->
+        <div class="approach-step" id="outcomes">
+          <div class="step-content reveal">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Deployment & Impact</h3>
+            <p class="step-body">Launch the system, train your team, and track results from week one. Every engagement
+              has a measurable outcome tied to real business metrics.</p>
+          </div>
+          <div class="step-visual reveal">
+            <div class="counter-visual">
+              <div class="counter-number" id="counterNumber">0</div>
+              <div class="counter-label">HRS/WEEK SAVED</div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="cta-section">
+      <div class="cta-inner">
+        <div class="cta-heading reveal">
+          Ready to stop planning and start <span class="cta-heading-bold">building?</span>
+        </div>
+        <div class="cta-form reveal">
+          <label class="cta-form-label">START WITH A FREE AUDIT</label>
+          <form netlify name="audit-requests" id="auditForm">
+            <input type="hidden" name="form-name" value="audit-requests" />
+            <input type="text" name="name" class="cta-input" placeholder="Your name" required>
+            <input type="email" name="email" class="cta-input" placeholder="Work email" required>
+            <input type="text" name="company" class="cta-input" placeholder="Company & industry" required>
+            <button type="submit" class="cta-btn">Book Free Audit <span>→</span></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">METRIK</div>
+      <div class="footer-copy">© 2026 Metrik. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Session ID for agent
+    const sessionId = 'session_' + Date.now();
+
+    // Navigation scroll effect
+    const navPill = document.getElementById('navPill');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        navPill.classList.add('scrolled');
+      } else {
+        navPill.classList.remove('scrolled');
+      }
+    });
+
+    // Scroll reveal animation
+    const revealElements = document.querySelectorAll('.reveal, .reveal-stagger');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Counter animation
+    const counterNumber = document.getElementById('counterNumber');
+    const progressFill = document.getElementById('progressFill');
+    let counterAnimated = false;
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !counterAnimated) {
+          counterAnimated = true;
+          animateCounter();
+          progressFill.classList.add('animate');
+        }
+      });
+    }, { threshold: 0.5 });
+
+    counterObserver.observe(counterNumber);
+
+    function animateCounter() {
+      const target = 14;
+      const duration = 1200;
+      const start = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(easeProgress * target);
+        counterNumber.textContent = current;
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    // AI Agent Widget
+    const agentMessages = document.getElementById('agentMessages');
+    const agentInput = document.getElementById('agentInput');
+    const agentSend = document.getElementById('agentSend');
+
+    const responses = {
+      'law firm': "Law firms typically save 12–18 hrs/week on intake, document review, and client follow-up. Want me to outline which workflows we'd target first?",
+      'medical clinic': "Clinics usually recover the most time on appointment reminders, patient intake forms, and billing follow-up. Want to see what that looks like for your practice?",
+      'accounting': "Accounting practices often see the fastest ROI on document processing and client onboarding. Want to see what that looks like?",
+      'other': "Every business has repetitive work AI can handle. Tell me what your team spends the most time on manually — scheduling, paperwork, follow-ups, data entry — and I'll show you where we'd start."
+    };
+
+    const followUpMessage = "Got it. The best way to evaluate exactly how we can help is to jump on a quick process mapping call. It's free and zero pressure.";
+
+    function addMessage(text, isUser = false, isHTML = false) {
+      const message = document.createElement('div');
+      message.className = `message ${isUser ? 'message-user' : 'message-agent'}`;
+      if (isHTML) {
+        message.innerHTML = text;
+      } else {
+        message.textContent = text;
+      }
+      agentMessages.appendChild(message);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+    }
+
+    function addQuickReplies(options) {
+      const repliesDiv = document.createElement('div');
+      repliesDiv.className = 'quick-replies';
+
+      options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-reply';
+        btn.textContent = option;
+        btn.addEventListener('click', () => handleQuickReply(option));
+        repliesDiv.appendChild(btn);
+      });
+
+      agentMessages.appendChild(repliesDiv);
+      agentMessages.scrollTop = agentMessages.scrollHeight;
+    }
+
+    function handleQuickReply(option) {
+      // Remove quick replies
+      const replies = agentMessages.querySelectorAll('.quick-replies');
+      replies.forEach(r => r.remove());
+
+      // Add user message
+      addMessage(option, true);
+
+      // Check for affirmative responses first
+      const lowerOption = option.toLowerCase();
+      if (lowerOption === 'yes' || lowerOption === 'tell me more') {
+        setTimeout(() => {
+          addMessage(followUpMessage);
+
+          // Add book call button
+          setTimeout(() => {
+            const btnHTML = '<a href="#cta-section" class="book-call-btn">Book a Call →</a>';
+            addMessage(btnHTML, false, true);
+          }, 500);
+        }, 600);
+        return;
+      }
+
+      // Get response for industry options
+      const key = lowerOption;
+      const response = responses[key] || responses['other'];
+
+      // Add agent response after delay
+      setTimeout(() => {
+        addMessage(response);
+
+        // Add follow-up question
+        setTimeout(() => {
+          addMessage("Want me to outline which workflows we'd target first?");
+          addQuickReplies(['Yes', 'Tell me more']);
+        }, 800);
+      }, 600);
+    }
+
+    function handleUserInput() {
+      const text = agentInput.value.trim();
+      if (!text) return;
+
+      agentInput.value = '';
+      addMessage(text, true);
+
+      // Check for yes/positive responses after follow-up
+      const lowerText = text.toLowerCase();
+      if (lowerText.includes('yes') || lowerText.includes('sure') || lowerText.includes('tell me')) {
+        setTimeout(() => {
+          addMessage(followUpMessage);
+
+          // Add book call button
+          setTimeout(() => {
+            const btnHTML = '<a href="#cta-section" class="book-call-btn">Book a Call</a>';
+            addMessage(btnHTML, false, true);
+          }, 500);
+        }, 600);
+      } else {
+        // Default fallback
+        setTimeout(() => {
+          addMessage("Got it. The best way to evaluate is a quick process mapping call — free and zero pressure. Want to book one?");
+          addQuickReplies(['Book a Call', 'Maybe later']);
+        }, 600);
+      }
+    }
+
+    // Initialize agent
+    setTimeout(() => {
+      addMessage("Hi 👋 I'm Metrik's intake agent. What kind of business are you running?");
+      addQuickReplies(['Law firm', 'Medical clinic', 'Accounting', 'Other']);
+    }, 800);
+
+    agentSend.addEventListener('click', handleUserInput);
+    agentInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleUserInput();
+    });
+
+    // Form submission — posts to Netlify Forms via fetch
+    document.getElementById('auditForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      })
+        .then(() => {
+          const success = document.createElement('p');
+          success.textContent = "✓ We'll be in touch within 24 hours to schedule your free audit.";
+          success.style.cssText = "color:#F5F2EC;font-family:'Geist Mono',monospace;font-size:14px;line-height:1.6;";
+          form.replaceWith(success);
+        })
+        .catch(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Book Free Audit →';
+          const err = document.createElement('p');
+          err.style.cssText = 'color:#F5F2EC;font-size:13px;margin-top:8px;opacity:0.7;';
+          err.textContent = 'Something went wrong. Please try again.';
+          form.appendChild(err);
+        });
+    });
+  </script>
+  <form name="audit-requests" netlify hidden>
+    <input type="hidden" name="form-name" value="audit-requests" />
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="text" name="company" />
+  </form>
+</body>
+
+</html>
