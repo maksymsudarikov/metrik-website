@@ -1733,20 +1733,20 @@
     // Form submission
     document.getElementById('auditForm').addEventListener('submit', (e) => {
       e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
 
-      // Webhook placeholder - replace with actual endpoint
-      // fetch('YOUR_WEBHOOK_URL', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     sessionId,
-      //     timestamp: new Date().toISOString(),
-      //     formData: Object.fromEntries(new FormData(e.target))
-      //   })
-      // });
-
-      alert('Thank you! We will be in touch within 24 hours to schedule your free audit.');
-      e.target.reset();
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString()
+      })
+      .then(() => {
+        form.innerHTML = '<p style="color: #F5F2EC; font-family: Instrument Serif, serif; font-style: italic; font-size: 20px;">We\'ll be in touch within 24 hours.</p>';
+      })
+      .catch(() => {
+        alert('Something went wrong. Please try again.');
+      });
     });
   </script>
   <form name="audit-requests" netlify hidden>
