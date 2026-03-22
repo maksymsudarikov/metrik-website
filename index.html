@@ -20,6 +20,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap" as="style">
   <link
     href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap"
     rel="stylesheet">
@@ -2146,15 +2147,15 @@
       })
         .then(() => {
           const success = document.createElement('p');
-          success.textContent = "✓ We'll be in touch within 24 hours to schedule your free audit.";
-          success.style.cssText = "color:#F5F2EC;font-family:'Geist Mono',monospace;font-size:14px;line-height:1.6;";
+          success.textContent = "We'll be in touch within 24 hours to schedule your free audit.";
+          success.style.cssText = "color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.6;";
           form.replaceWith(success);
         })
         .catch(() => {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Book Free Audit →';
           const err = document.createElement('p');
-          err.style.cssText = 'color:#F5F2EC;font-size:13px;margin-top:8px;opacity:0.7;';
+          err.style.cssText = 'color:var(--ink-mid);font-size:13px;margin-top:8px;';
           err.textContent = 'Something went wrong. Please try again.';
           form.appendChild(err);
         });
